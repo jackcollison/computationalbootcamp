@@ -1,149 +1,149 @@
 # Load required libraries
 using Optim, Interpolations, Plots
 
-# # Problem 1
-# # Himmelblau functionality
-# function Himmelblau(p::Vector{Float64})
-#     (p[1]^2 + p[2] - 11)^2 + (p[1] + p[2]^2 - 7)^2
-# end
+# Problem 1
+# Himmelblau functionality
+function Himmelblau(p::Vector{Float64})
+    (p[1]^2 + p[2] - 11)^2 + (p[1] + p[2]^2 - 7)^2
+end
 
-# # Instantiation of grids
-# x, y = collect(-4:0.01:4), collect(-4:0.01:4)
-# nx, ny = length(x), length(y)
-# z = zeros(nx, ny)
+# Instantiation of grids
+x, y = collect(-4:0.01:4), collect(-4:0.01:4)
+nx, ny = length(x), length(y)
+z = zeros(nx, ny)
 
-# # Fill in function values
-# for i = 1:nx, j = 1:ny
-#     z[i,j] = Himmelblau([x[i], y[j]])
-# end
+# Fill in function values
+for i = 1:nx, j = 1:ny
+    z[i,j] = Himmelblau([x[i], y[j]])
+end
 
-# # Surface plot
-# Plots.surface(x, y, z, seriescolor=:viridis, camera = (50,50))
+# Surface plot
+Plots.surface(x, y, z, seriescolor=:viridis, camera = (50,50))
 
-# # Gradient function
-# function g!(G, p::Vector{Float64})
-#     G[1] = 4 * p[1] * (p[1]^2 + p[2] - 11) + 2 * (p[1] + p[2]^2 - 7)
-#     G[2] = 2 * (p[1]^2 + p[2] - 11) + 4 * p[2] * (p[1] + p[2]^2 - 7)
-# end
+# Gradient function
+function g!(G, p::Vector{Float64})
+    G[1] = 4 * p[1] * (p[1]^2 + p[2] - 11) + 2 * (p[1] + p[2]^2 - 7)
+    G[2] = 2 * (p[1]^2 + p[2] - 11) + 4 * p[2] * (p[1] + p[2]^2 - 7)
+end
 
-# # Hessian function
-# function h!(H, p::Vector{Float64})
-#     H[1] = 4 * (p[1]^2 + p[2] - 11) + 8 * p[1]^2 + 2
-#     H[2] = 4 * p[1] + 4 * p[2]
-#     H[3] = 4 * p[1] + 4 * p[2]
-#     H[4] = 2 + 4 * (p[1] + p[2]^2 - 7) + 8 * p[2]^2
-# end
+# Hessian function
+function h!(H, p::Vector{Float64})
+    H[1] = 4 * (p[1]^2 + p[2] - 11) + 8 * p[1]^2 + 2
+    H[2] = 4 * p[1] + 4 * p[2]
+    H[3] = 4 * p[1] + 4 * p[2]
+    H[4] = 2 + 4 * (p[1] + p[2]^2 - 7) + 8 * p[2]^2
+end
 
-# # Initial guesses
-# X₀ = [[0.0, 0.0], [1.0, 1.0], [100.0, 0.0], [0.0, 100.0], [-1.0, -1.0], [-100.0, 0.0], [0.0, -100.0], [-1.0, 1.0], [1.0, -1.0]]
+# Initial guesses
+X₀ = [[0.0, 0.0], [1.0, 1.0], [100.0, 0.0], [0.0, 100.0], [-1.0, -1.0], [-100.0, 0.0], [0.0, -100.0], [-1.0, 1.0], [1.0, -1.0]]
 
-# # Different guesses
-# for x₀ in X₀
-#     # Newton's method optimization
-#     @elapsed opt = optimize(Himmelblau, g!, h!, x₀)
-#     println("Newton's method on the Himmelblau function with starting point $x₀ yields: \n", opt)
+# Different guesses
+for x₀ in X₀
+    # Newton's method optimization
+    @elapsed opt = optimize(Himmelblau, g!, h!, x₀)
+    println("Newton's method on the Himmelblau function with starting point $x₀ yields: \n", opt)
 
-#     # Nelder-Mead optimization
-#     @elapsed opt = optimize(Himmelblau, x₀)
-#     println("Nelder-Mead on the Himmelblau function with starting point $x₀ yields: \n", opt)
-# end
+    # Nelder-Mead optimization
+    @elapsed opt = optimize(Himmelblau, x₀)
+    println("Nelder-Mead on the Himmelblau function with starting point $x₀ yields: \n", opt)
+end
 
-# # Problem 2
-# # Ackley functionality
-# function Ackley(p::Vector{Float64})
-#     -20 * exp(-0.2 * sqrt(0.5 * (p[1]^2 + p[2]^2))) - exp(0.5 * (cos(2 * π * p[1]) + cos(2 * π * p[2]))) + ℯ + 20
-# end
+# Problem 2
+# Ackley functionality
+function Ackley(p::Vector{Float64})
+    -20 * exp(-0.2 * sqrt(0.5 * (p[1]^2 + p[2]^2))) - exp(0.5 * (cos(2 * π * p[1]) + cos(2 * π * p[2]))) + ℯ + 20
+end
 
-# # Instantiation of grids
-# x, y = collect(-4:0.01:4), collect(-4:0.01:4)
-# nx, ny = length(x), length(y)
-# z = zeros(nx, ny)
+# Instantiation of grids
+x, y = collect(-4:0.01:4), collect(-4:0.01:4)
+nx, ny = length(x), length(y)
+z = zeros(nx, ny)
 
-# # Fill in function values
-# for i = 1:nx, j = 1:ny
-#     z[i,j] = Ackley([x[i], y[j]])
-# end
+# Fill in function values
+for i = 1:nx, j = 1:ny
+    z[i,j] = Ackley([x[i], y[j]])
+end
 
-# # Surface and contour plots
-# p1 = Plots.surface(x, y, z, seriescolor=:viridis, camera = (50,50))
-# p2 = Plots.contourf(x, y, z, seriescolor=:inferno)
-# Plots.plot(p1, p2, layout = (2,1), legend=:none)
+# Surface and contour plots
+p1 = Plots.surface(x, y, z, seriescolor=:viridis, camera = (50,50))
+p2 = Plots.contourf(x, y, z, seriescolor=:inferno)
+Plots.plot(p1, p2, layout = (2,1), legend=:none)
 
-# # Different guesses
-# for x₀ in X₀
-#     # LBFGS optimization
-#     opt = optimize(Ackley, x₀, LBFGS())
-#     println("LBFGS on the Ackley function with starting point $x₀ yields: \n", opt)
+# Different guesses
+for x₀ in X₀
+    # LBFGS optimization
+    opt = optimize(Ackley, x₀, LBFGS())
+    println("LBFGS on the Ackley function with starting point $x₀ yields: \n", opt)
 
-#     # Nelder-Mead optimization
-#     opt = optimize(Ackley, x₀)
-#     println("Nelder-Mead on the Ackley function with starting point $x₀ yields: \n", opt)
-# end
+    # Nelder-Mead optimization
+    opt = optimize(Ackley, x₀)
+    println("Nelder-Mead on the Ackley function with starting point $x₀ yields: \n", opt)
+end
 
-# # Problem 3
-# # Rastrigin functionality
-# function Rastrigin(p::Vector{Float64})
-#     10 * length(p) + sum([pᵢ^2 - 10 * cos(pᵢ) for pᵢ in p])
-# end
+# Problem 3
+# Rastrigin functionality
+function Rastrigin(p::Vector{Float64})
+    10 * length(p) + sum([pᵢ^2 - 10 * cos(pᵢ) for pᵢ in p])
+end
 
-# # Instantiation of grids
-# x = collect(-5.12:0.01:5.12)
-# nx = length(x)
-# y = zeros(nx)
+# Instantiation of grids
+x = collect(-5.12:0.01:5.12)
+nx = length(x)
+y = zeros(nx)
 
-# # Fill in function values
-# for i = 1:nx
-#     y[i] = Rastrigin([x[i]])
-# end
+# Fill in function values
+for i = 1:nx
+    y[i] = Rastrigin([x[i]])
+end
 
-# # Plot function
-# Plots.plot(x, y, legend=:none)
+# Plot function
+Plots.plot(x, y, legend=:none)
 
-# # Instantiation of grids
-# x, y = collect(-5.12:0.01:5.12), collect(-5.12:0.01:5.12)
-# nx, ny = length(x), length(y)
-# z = zeros(nx, ny)
+# Instantiation of grids
+x, y = collect(-5.12:0.01:5.12), collect(-5.12:0.01:5.12)
+nx, ny = length(x), length(y)
+z = zeros(nx, ny)
 
-# # Fill in function values
-# for i = 1:nx, j = 1:ny
-#     z[i,j] = Rastrigin([x[i], y[j]])
-# end
+# Fill in function values
+for i = 1:nx, j = 1:ny
+    z[i,j] = Rastrigin([x[i], y[j]])
+end
 
-# # Surface and contour plots
-# p1 = Plots.surface(x, y, z, seriescolor=:viridis, camera = (50,50))
-# p2 = Plots.contourf(x, y, z, seriescolor=:inferno)
-# Plots.plot(p1, p2, layout = (2,1), legend=:none)
+# Surface and contour plots
+p1 = Plots.surface(x, y, z, seriescolor=:viridis, camera = (50,50))
+p2 = Plots.contourf(x, y, z, seriescolor=:inferno)
+Plots.plot(p1, p2, layout = (2,1), legend=:none)
 
-# # Initial guess
-# for x₀ in X₀
-#     # LBFGS optimization
-#     opt = optimize(Rastrigin, x₀, LBFGS())
-#     println("LBFGS on the Rastrigin function with starting point $x₀ yields: \n", opt)
+# Initial guess
+for x₀ in X₀
+    # LBFGS optimization
+    opt = optimize(Rastrigin, x₀, LBFGS())
+    println("LBFGS on the Rastrigin function with starting point $x₀ yields: \n", opt)
 
-#     # Nelder-Mead optimization
-#     opt = optimize(Rastrigin, x₀)
-#     println("Nelder-Mead on the Rastrigin with starting point $x₀ function yields: \n", opt)
-# end
+    # Nelder-Mead optimization
+    opt = optimize(Rastrigin, x₀)
+    println("Nelder-Mead on the Rastrigin with starting point $x₀ function yields: \n", opt)
+end
 
-# # Problem 4
-# # Linearization functionality
-# function linearize(f, a::Float64, b::Float64, n::Int64, x::Float64)
-#     # Generate grid
-#     X = collect(range(a, b, length=n))
-#     v = zeros(n)
+# Problem 4
+# Linearization functionality
+function linearize(f, a::Float64, b::Float64, n::Int64, x::Float64)
+    # Generate grid
+    X = collect(range(a, b, length=n))
+    v = zeros(n)
 
-#     # Fill in values
-#     for (i, xᵢ) in enumerate(X)
-#         v[i] = f(xᵢ)
-#     end
+    # Fill in values
+    for (i, xᵢ) in enumerate(X)
+        v[i] = f(xᵢ)
+    end
 
-#     # First point bigger than x and point before
-#     i₊ = findfirst(z -> z > x, X)
-#     i₋ = i₊ - 1
+    # First point bigger than x and point before
+    i₊ = findfirst(z -> z > x, X)
+    i₋ = i₊ - 1
 
-#     # Linear interpolation
-#     v[i₋] + (x - X[i₋]) * (v[i₊] - v[i₋]) / (X[i₊] - X[i₋])
-# end
+    # Linear interpolation
+    v[i₋] + (x - X[i₋]) * (v[i₊] - v[i₋]) / (X[i₊] - X[i₋])
+end
 
 # Problem 5
 # Approximation of log(1 + x)
