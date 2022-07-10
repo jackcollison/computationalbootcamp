@@ -49,60 +49,54 @@ end
 # Fit on whole sample
 ll_min(0, length(data.Wage), data)
 
-ll_min(0, Int(floor(length(data.Wage) / 2)), data)
+# Problem 2
+# Monte-Carlo simulations
+function matching(n::Int64, iterations::Int64)
+    # Function to shuffle and find matches
+    function find_matches(n::Int64)
+        x, y = collect(1:1:n), shuffle!(collect(1:1:n))
+        sum(x[i] == y[i] for i in 1:n)
+    end
 
-# Package for presentation
+    # Get matches
+    matches = [find_matches(n) for i in 1:iterations]
+    histogram(matches, bins=10, title="Matches for n = $n")
+end
 
-## TODO: Fix this up and add bootstrapping for standard errors
+# Simulate matches
+p1 = matching(10, 10000)
+p2 = matching(20, 10000)
+Plots.plot(p1, p2, layout = (2,1), legend=:none)
 
-# # Problem 2
-# # Monte-Carlo simulations
-# function matching(n::Int64, iterations::Int64)
-#     # Function to shuffle and find matches
-#     function find_matches(n::Int64)
-#         x, y = collect(1:1:n), shuffle!(collect(1:1:n))
-#         sum(x[i] == y[i] for i in 1:n)
-#     end
+# Problem 3
+# Simulate savings
+function sim_savings(E::Float64, S::Float64, P::Float64, years::Int64, uncertain::Bool, iterations::Int64)
+    # Simulate savings and earnings
+    p = zeros(iterations)
+    for i in 1:iterations
+        # Instantiate
+        Sᵢ, Eᵢ = S, E
 
-#     # Get matches
-#     matches = [find_matches(n) for i in 1:iterations]
-#     histogram(matches, bins=10, title="Matches for n = $n")
-# end
+        # Loop over years
+        for t in 1:years
+            # Calculate savings and earnings
+            Sᵢ *= (1 + ifelse(uncertain, rand(Normal(0.06, 0.06)), 0.06))
+            Eᵢ *= (1 + ifelse(uncertain, rand(Uniform(0, 0.06)), 0.03))
+            Sᵢ += P * Eᵢ
+        end
 
-# # Simulate matches
-# p1 = matching(10, 10000)
-# p2 = matching(20, 10000)
-# Plots.plot(p1, p2, layout = (2,1), legend=:none)
+        # Get proportion of earnings
+        p[i] = Sᵢ / Eᵢ
+    end
 
-# # Problem 3
-# # Simulate savings
-# function sim_savings(E::Float64, S::Float64, P::Float64, years::Int64, uncertain::Bool, iterations::Int64)
-#     # Simulate savings and earnings
-#     p = zeros(iterations)
-#     for i in 1:iterations
-#         # Instantiate
-#         Sᵢ, Eᵢ = S, E
+    # Return
+    p
+end
 
-#         # Loop over years
-#         for t in 1:years
-#             # Calculate savings and earnings
-#             Sᵢ *= (1 + ifelse(uncertain, rand(Normal(0.06, 0.06)), 0.06))
-#             Eᵢ *= (1 + ifelse(uncertain, rand(Uniform(0, 0.06)), 0.03))
-#             Sᵢ += P * Eᵢ
-#         end
-
-#         # Get proportion of earnings
-#         p[i] = Sᵢ / Eᵢ
-#     end
-
-#     # Return
-#     p
-# end
-
-# # Run simulations for certain and uncertain outcomes
-# p = sim_savings(100.0, 100.0, 0.1125, 37, false, 1)
-# println("The returns are p = ", p[1])
-# p = sim_savings(100.0, 100.0, 0.1125, 37, true, 100000)
-# println("The proportion of returns at least 10x earnings is estimated as p = ", sum(p .< 10) / length(p))
-# p = sim_savings(100.0, 100.0, 0.15, 37, true, 100000)
-# println("The proportion of returns at least 10x earnings is estimated as p = ", sum(p .< 10) / length(p))
+# Run simulations for certain and uncertain outcomes
+p = sim_savings(100.0, 100.0, 0.1125, 37, false, 1)
+println("The returns are p = ", p[1])
+p = sim_savings(100.0, 100.0, 0.1125, 37, true, 100000)
+println("The proportion of returns at least 10x earnings is estimated as p = ", sum(p .< 10) / length(p))
+p = sim_savings(100.0, 100.0, 0.15, 37, true, 100000)
+println("The proportion of returns at least 10x earnings is estimated as p = ", sum(p .< 10) / length(p))
